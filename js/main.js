@@ -57,24 +57,33 @@ function revokePreview() {
 
 function selectFile(file) {
   if (!file) return;
-  resetReading();
-  revokePreview();
-  state.file = file;
-  state.previewUrl = URL.createObjectURL(file);
-  els.preview.src = state.previewUrl;
-  els.preview.hidden = false;
-  setStatus(`Imagem selecionada: ${file.name}`);
-  render();
+  resetReading(); //[cite: 3]
+  revokePreview(); //[cite: 3]
+  state.file = file; //[cite: 3]
+  state.previewUrl = URL.createObjectURL(file); //[cite: 3]
+  els.preview.src = state.previewUrl; //[cite: 3]
+  els.preview.hidden = false; //[cite: 3]
+  
+  // Mostra o container pai da foto no mobile
+  const container = document.getElementById('previewContainer');
+  if (container) container.classList.remove('hidden');
+
+  setStatus(`Imagem selecionada: ${file.name}`); //[cite: 3]
+  render(); //[cite: 3]
 }
 
 function clearAll() {
-  resetReading();
-  revokePreview();
-  state.file = null;
-  els.preview.removeAttribute('src');
-  els.preview.hidden = true;
-  setStatus('Aguardando uma imagem.');
-  render();
+  resetReading(); //[cite: 3]
+  revokePreview(); //[cite: 3]
+  state.file = null; //[cite: 3]
+  els.preview.removeAttribute('src'); //[cite: 3]
+  els.preview.hidden = true; //[cite: 3]
+  
+  const container = document.getElementById('previewContainer');
+  if (container) container.classList.add('hidden');
+
+  setStatus('Aguardando uma imagem.'); //[cite: 3]
+  render(); //[cite: 3]
 }
 
 async function runOcr() {
