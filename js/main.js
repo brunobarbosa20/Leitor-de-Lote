@@ -57,33 +57,34 @@ function revokePreview() {
 
 function selectFile(file) {
   if (!file) return;
-  resetReading(); //[cite: 3]
-  revokePreview(); //[cite: 3]
-  state.file = file; //[cite: 3]
-  state.previewUrl = URL.createObjectURL(file); //[cite: 3]
-  els.preview.src = state.previewUrl; //[cite: 3]
-  els.preview.hidden = false; //[cite: 3]
+  resetReading();
+  revokePreview();
+  state.file = file;
+  state.previewUrl = URL.createObjectURL(file);
+  els.preview.src = state.previewUrl;
+  els.preview.hidden = false;
   
-  // Mostra o container pai da foto no mobile
+  // Mostra o container da foto
   const container = document.getElementById('previewContainer');
-  if (container) container.classList.remove('hidden');
+  if (container) container.hidden = false;
 
-  setStatus(`Imagem selecionada: ${file.name}`); //[cite: 3]
-  render(); //[cite: 3]
+  setStatus(`Imagem selecionada: ${file.name}`);
+  render();
 }
 
 function clearAll() {
-  resetReading(); //[cite: 3]
-  revokePreview(); //[cite: 3]
-  state.file = null; //[cite: 3]
-  els.preview.removeAttribute('src'); //[cite: 3]
-  els.preview.hidden = true; //[cite: 3]
+  resetReading();
+  revokePreview();
+  state.file = null;
+  els.preview.removeAttribute('src');
+  els.preview.hidden = true;
   
+  // Esconde o container da foto
   const container = document.getElementById('previewContainer');
-  if (container) container.classList.add('hidden');
+  if (container) container.hidden = true;
 
-  setStatus('Aguardando uma imagem.'); //[cite: 3]
-  render(); //[cite: 3]
+  setStatus('Aguardando uma imagem.');
+  render();
 }
 
 async function runOcr() {

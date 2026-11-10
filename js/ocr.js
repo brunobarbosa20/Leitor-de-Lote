@@ -1,9 +1,5 @@
 // Envolve o Tesseract.js (carregado como script global em index.html).
 
-/**
- * Redimensiona e comprime a foto inteira capturada pela câmera do celular
- * para evitar sobrecarga de memória RAM e travamentos durante o OCR.
- */
 function comprimirImagem(file) {
   return new Promise((resolve) => {
     if (!file || !file.type.startsWith('image/')) {
@@ -18,7 +14,7 @@ function comprimirImagem(file) {
         const canvas = document.createElement('canvas');
         let width = img.width;
         let height = img.height;
-        const MAX_SIZE = 1200; // Limite ideal para leitura de etiquetas sem pesar no celular
+        const MAX_SIZE = 1200;
 
         if (width > height) {
           if (width > MAX_SIZE) {
@@ -39,7 +35,7 @@ function comprimirImagem(file) {
 
         canvas.toBlob((blob) => {
           resolve(blob || file);
-        }, 'image/jpeg', 0.85); // Converte para JPEG otimizado com 85% de qualidade
+        }, 'image/jpeg', 0.85);
       };
       img.onerror = () => resolve(file);
       img.src = e.target.result;
@@ -49,17 +45,11 @@ function comprimirImagem(file) {
   });
 }
 
-/**
- * @param {File|Blob} file Imagem da etiqueta.
- * @param {(m: {status?: string, progress?: number}) => void} [onProgress]
- * @returns {Promise<string>} Texto bruto reconhecido (uso interno; não é exibido).
- */
 async function recognizeText(file, onProgress) {
   if (!window.Tesseract) {
     throw new Error('Tesseract.js não foi carregado. Verifique a conexão com a internet.');
   }
 
-  // Comprime e redimensiona a foto inteira antes de rodar o OCR
   const imagemOtimizada = await comprimirImagem(file);
 
   const result = await window.Tesseract.recognize(imagemOtimizada, 'por+eng', {
