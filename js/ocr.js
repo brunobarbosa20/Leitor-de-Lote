@@ -14,15 +14,13 @@ function comprimirImagem(file) {
         const canvas = document.createElement('canvas');
         let width = img.width;
         let height = img.height;
-        const MAX_SIZE = 1200;
+        const MAX_SIZE = 1600;
 
-        if (width > height) {
-          if (width > MAX_SIZE) {
+        if (width > MAX_SIZE || height > MAX_SIZE) {
+          if (width > height) {
             height = Math.round((height * MAX_SIZE) / width);
             width = MAX_SIZE;
-          }
-        } else {
-          if (height > MAX_SIZE) {
+          } else {
             width = Math.round((width * MAX_SIZE) / height);
             height = MAX_SIZE;
           }
@@ -35,7 +33,7 @@ function comprimirImagem(file) {
 
         canvas.toBlob((blob) => {
           resolve(blob || file);
-        }, 'image/jpeg', 0.85);
+        }, 'image/jpeg', 0.90);
       };
       img.onerror = () => resolve(file);
       img.src = e.target.result;
@@ -52,8 +50,24 @@ async function recognizeText(file, onProgress) {
 
   const imagemOtimizada = await comprimirImagem(file);
 
-  const result = await window.Tesseract.recognize(imagemOtimizada, 'por+eng', {
+  const worker = await window.Tesseract.createWorker('por+eng', window.Tesseract.OEM_DEFAULT, {
     logger: m => onProgress?.(m)
   });
-  return result.data.text || '';
+  
+  // Usamos PSM.AUTO (modo padrão automático do Tesseract), ideal para documentos e etiquetas com tabelas/códigos de barras
+  await worker.setParameters({
+    tessedit_pageseg_mode: window.Tesseract.PSM.AUTO,
+  });
+
+  const ret = await worker.recognize(imagemOtimizada);
+
+  await worker.terminate();
+
+  const text = ret.data.text || '';
+
+  console.log("--- TEXTO COMPLETO LIDO PELO OCR (AUTO) ---");
+  console.log(text);
+  console.log("------------------------------------------");
+
+  return text;
 }
