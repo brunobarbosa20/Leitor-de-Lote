@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste OCR — Etiquetas de Insumos</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <h1>Leitor de etiquetas — teste OCR</h1>
+  <p class="sub">Protótipo com Tesseract.js. A leitura acontece no navegador; confirme tudo na etiqueta original.</p>
+
+  <section class="card">
+    <div class="grid">
+      <div>
+        <h2>1. Envie uma foto</h2>
+        <div class="drop">
+          <strong>Fotografe ou selecione a etiqueta do fornecedor</strong><br>
+          <span class="hint">JPG, PNG ou WEBP. "Escolher arquivo" abre as pastas do computador ou a galeria/arquivos do celular. Fotos nítidas, aproximadas e bem iluminadas tendem a funcionar melhor.</span>
+          <div class="actions">
+            <button id="pickCamera" type="button">Tirar foto</button>
+            <button id="pickGallery" class="secondary" type="button">Escolher arquivo</button>
+          </div>
+          <!-- capture="environment" abre a câmera traseira em celulares -->
+          <input id="fileCamera" type="file" accept="image/*" capture="environment" hidden>
+          <input id="fileGallery" type="file" accept="image/*" hidden>
+        </div>
+        <img id="preview" alt="Prévia da etiqueta selecionada" hidden>
+        <div class="actions">
+          <button id="run" disabled>Ler lote</button>
+          <button id="clear" class="secondary" type="button">Limpar</button>
+        </div>
+        <div class="status" id="status" aria-live="polite">Aguardando uma imagem.</div>
+        <div class="progress" id="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="bar"></div></div>
+      </div>
+      <div>
+        <h2>2. Lote identificado</h2>
+        <p class="hint">A leitura procura apenas o número ou código do lote, indicado por palavras como LOTE, LOT ou BATCH.</p>
+        <div id="result" hidden>
+          <div class="warn" id="inconclusive" hidden><strong>Leitura não conclusiva.</strong> Não foi possível identificar o lote nesta imagem. Preencha manualmente abaixo ou envie outra foto.</div>
+          <div class="lot-display" id="lotDisplay" hidden></div>
+          <div class="field" id="lotField" hidden>
+            <label for="lot">Lote</label>
+            <input id="lot" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Digite o lote">
+          </div>
+          <div class="actions">
+            <button id="edit" class="secondary" type="button">Editar</button>
+            <button id="confirm" type="button">Confirmar</button>
+          </div>
+        </div>
+        <p class="hint" id="resultNote" aria-live="polite">Nenhuma leitura realizada.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="warn"><strong>Atenção:</strong> OCR pode confundir caracteres (por exemplo, 0/O, 1/I, 5/S). Este protótipo não valida a autenticidade do lote nem substitui a conferência física. Não use os dados para liberar estoque sem confirmação humana.</div>
+  </section>
+  <footer>Teste demonstrativo · Tesseract.js 5 · Requer conexão com a internet para carregar a biblioteca e os dados de idioma.</footer>
+</main>
+<!-- scripts comuns (não módulos), para funcionar também abrindo o arquivo com duplo clique -->
+<script src="js/lot-extractor.js"></script>
+<script src="js/ocr.js"></script>
+<script src="js/confirmations.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
